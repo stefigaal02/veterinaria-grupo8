@@ -15,6 +15,8 @@ builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();
 builder.Services.AddScoped<PropietarioService>();
 builder.Services.AddScoped<IMascotaRepository, MascotaRepository>();   
 builder.Services.AddScoped<MascotaService>(); 
+builder.Services.AddScoped<IHistoriaClinicaRepository, HistoriaClinicaRepository>();
+builder.Services.AddScoped<HistoriaClinicaService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
