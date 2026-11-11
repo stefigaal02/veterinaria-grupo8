@@ -3,7 +3,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -11,13 +10,27 @@
         android:id="@+id/tvBienvenida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="20sp" />
+        android:layout_marginTop="24dp"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvRol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp" />
+
+    <Button
+        android:id="@+id/btnPacientes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pacientes" />
 
     <Button
         android:id="@+id/btnCerrarSesion"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:text="Cerrar sesión" />
 </LinearLayout>

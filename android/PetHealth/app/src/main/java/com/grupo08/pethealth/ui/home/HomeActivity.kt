@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.ui.login.LoginActivity
 import com.grupo08.pethealth.utils.SessionManager
-
+import com.grupo08.pethealth.ui.pacientes.PacientesActivity
 class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +25,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val session = SessionManager(this)
-        findViewById<TextView>(R.id.tvBienvenida).text =
-            "Hola, ${session.nombre()}\nRol: ${session.rol()}"
+        findViewById<TextView>(R.id.tvBienvenida).text = "Hola, ${session.nombre()}"
+        findViewById<TextView>(R.id.tvRol).text = "Rol: ${session.rol()}"
+
+        findViewById<Button>(R.id.btnPacientes).setOnClickListener {
+            startActivity(Intent(this, PacientesActivity::class.java))
+        }
 
         findViewById<Button>(R.id.btnCerrarSesion).setOnClickListener {
             session.cerrarSesion()
