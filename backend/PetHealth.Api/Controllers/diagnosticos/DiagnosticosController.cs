@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealth.Application.DTOs;
 using PetHealth.Application.Services;
 
 namespace PetHealth.Api.Controllers;
+
+[Authorize(Roles = "Veterinario,Administrador")]
 
 [ApiController]
 [Route("api/diagnosticos")]
