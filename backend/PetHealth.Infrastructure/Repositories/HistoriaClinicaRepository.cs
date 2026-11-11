@@ -14,12 +14,13 @@ public class HistoriaClinicaRepository : IHistoriaClinicaRepository
         _db = db;
     }
 
-    public Task<HistoriaClinica?> ObtenerPorMascotaAsync(int mascotaId) =>
-        _db.HistoriasClinicas
-            .Include(h => h.Mascota)
-            .Include(h => h.Consultas)
-                .ThenInclude(c => c.Diagnosticos)
-            .FirstOrDefaultAsync(h => h.MascotaId == mascotaId);
+   public Task<HistoriaClinica?> ObtenerPorMascotaAsync(int mascotaId) =>
+    _db.HistoriasClinicas
+        .Include(h => h.Mascota)
+            .ThenInclude(m => m!.Propietario)
+        .Include(h => h.Consultas)
+            .ThenInclude(c => c.Diagnosticos)
+        .FirstOrDefaultAsync(h => h.MascotaId == mascotaId);
 
     public Task<bool> ExisteHistoriaAsync(int historiaId) =>
         _db.HistoriasClinicas.AnyAsync(h => h.Id == historiaId);
