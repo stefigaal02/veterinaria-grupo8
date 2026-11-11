@@ -13,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(o => o.UseMySql(cs, ServerVersion.Au
 // Repositorios y servicios
 builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();
 builder.Services.AddScoped<PropietarioService>();
+builder.Services.AddScoped<IMascotaRepository, MascotaRepository>();   
+builder.Services.AddScoped<MascotaService>(); 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
