@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealth.Application.DTOs;
 using PetHealth.Application.Services;
 
 namespace PetHealth.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/vacunas")]
 public class VacunasController : ControllerBase
@@ -17,6 +18,8 @@ public class VacunasController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> Listar() => Ok(await _service.ListarAsync());
+
+[Authorize(Roles = "Administrador")]
 
     [HttpPost]
     public async Task<IActionResult> Crear(CrearVacunaDto dto) =>

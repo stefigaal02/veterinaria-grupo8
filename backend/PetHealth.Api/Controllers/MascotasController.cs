@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealth.Application.DTOs;
 using PetHealth.Application.Services;
 
 namespace PetHealth.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/mascotas")]
 public class MascotasController : ControllerBase

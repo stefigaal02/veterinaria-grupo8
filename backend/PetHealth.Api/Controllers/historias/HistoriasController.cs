@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealth.Application.DTOs;
 using PetHealth.Application.Services;
 
 namespace PetHealth.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/historias")]
 public class HistoriasController : ControllerBase
@@ -23,6 +25,8 @@ public class HistoriasController : ControllerBase
         return Ok(h);
     }
 
+    [Authorize(Roles = "Veterinario,Administrador")]
+    
     [HttpPost]
     public async Task<IActionResult> Abrir(AbrirHistoriaDto dto)
     {
