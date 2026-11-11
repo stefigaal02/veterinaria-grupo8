@@ -17,3 +17,12 @@ data class UsuarioResponse(
 )
 
 data class LoginResponse(val token: String, val usuario: UsuarioResponse)
+
+data class MascotaResponse(
+    val id: Int,
+    val nombre: String,
+    val especie: String,
+    val raza: String,
+    val propietarioId: Int,
+    val propietarioNombre: String
+)

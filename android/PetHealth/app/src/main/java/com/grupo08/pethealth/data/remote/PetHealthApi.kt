@@ -15,4 +15,7 @@ interface PetHealthApi {
 
     @GET("api/auth/perfil")
     suspend fun perfil(): Response<UsuarioResponse>
+
+    @GET("api/mascotas")
+    suspend fun mascotas(): Response<List<MascotaResponse>>
 }
