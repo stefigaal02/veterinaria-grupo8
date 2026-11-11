@@ -17,6 +17,8 @@ builder.Services.AddScoped<IMascotaRepository, MascotaRepository>();
 builder.Services.AddScoped<MascotaService>(); 
 builder.Services.AddScoped<IHistoriaClinicaRepository, HistoriaClinicaRepository>();
 builder.Services.AddScoped<HistoriaClinicaService>();
+builder.Services.AddScoped<IVacunaRepository, VacunaRepository>();
+builder.Services.AddScoped<VacunaService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
