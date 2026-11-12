@@ -30,6 +30,10 @@
             android:name=".ui.pacientes.PacientesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.pacientes.RegistrarPacienteActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

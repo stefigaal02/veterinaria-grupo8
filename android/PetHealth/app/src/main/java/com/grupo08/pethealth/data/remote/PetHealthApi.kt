@@ -18,4 +18,13 @@ interface PetHealthApi {
 
     @GET("api/mascotas")
     suspend fun mascotas(): Response<List<MascotaResponse>>
+
+    @GET("api/propietarios")
+    suspend fun propietarios(): Response<List<PropietarioResponse>>
+
+    @POST("api/propietarios")
+    suspend fun crearPropietario(@Body body: CrearPropietarioRequest): Response<PropietarioResponse>
+
+    @POST("api/mascotas")
+    suspend fun crearMascota(@Body body: CrearMascotaRequest): Response<MascotaResponse>
 }

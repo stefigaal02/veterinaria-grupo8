@@ -26,3 +26,23 @@ data class MascotaResponse(
     val propietarioId: Int,
     val propietarioNombre: String
 )
+
+data class PropietarioResponse(
+    val id: Int,
+    val documento: String,
+    val nombre: String,
+    val telefono: String
+)
+
+data class CrearPropietarioRequest(
+    val documento: String,
+    val nombre: String,
+    val telefono: String
+)
+
+data class CrearMascotaRequest(
+    val nombre: String,
+    val especie: String,
+    val raza: String,
+    val propietarioId: Int
+)
