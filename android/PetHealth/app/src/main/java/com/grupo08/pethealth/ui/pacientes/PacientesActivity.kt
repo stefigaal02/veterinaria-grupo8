@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.MascotaResponse
 import com.grupo08.pethealth.utils.Resultado
+import android.content.Intent
 
 class PacientesActivity : AppCompatActivity() {
 
@@ -41,6 +42,9 @@ class PacientesActivity : AppCompatActivity() {
         tvMensaje = findViewById(R.id.tvMensaje)
         val progress = findViewById<ProgressBar>(R.id.progress)
         val btnReintentar = findViewById<Button>(R.id.btnReintentar)
+        findViewById<View>(R.id.fabNuevo).setOnClickListener {
+            startActivity(Intent(this, RegistrarPacienteActivity::class.java))
+        }
         val rv = findViewById<RecyclerView>(R.id.rvPacientes)
 
         adapter = PacientesAdapter { mascota ->
