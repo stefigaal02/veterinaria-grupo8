@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.grupo08.pethealth.utils.BaseActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
@@ -19,7 +19,9 @@ import com.grupo08.pethealth.ui.home.HomeActivity
 import com.grupo08.pethealth.utils.Resultado
 import com.grupo08.pethealth.utils.SessionManager
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
+
+    override val conFlecha = false
 
     private val viewModel: LoginViewModel by viewModels()
 
@@ -46,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
         val btnIngresar = findViewById<Button>(R.id.btnIngresar)
         val progress = findViewById<ProgressBar>(R.id.progress)
         val tvError = findViewById<TextView>(R.id.tvError)
+
 
         btnIngresar.setOnClickListener {
             val email = etEmail.text.toString().trim()

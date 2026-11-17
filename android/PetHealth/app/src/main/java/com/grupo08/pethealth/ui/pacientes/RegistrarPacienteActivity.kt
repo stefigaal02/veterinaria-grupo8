@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.grupo08.pethealth.utils.BaseActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -21,7 +21,7 @@ import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.PropietarioResponse
 import com.grupo08.pethealth.utils.Resultado
 
-class RegistrarPacienteActivity : AppCompatActivity() {
+class RegistrarPacienteActivity : BaseActivity() {
 
     private val viewModel: RegistrarPacienteViewModel by viewModels()
     private var propietarios: List<PropietarioResponse> = emptyList()

@@ -8,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.grupo08.pethealth.utils.BaseActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
@@ -19,8 +19,9 @@ import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.MascotaResponse
 import com.grupo08.pethealth.utils.Resultado
 import android.content.Intent
+import com.grupo08.pethealth.ui.historia.HistoriaClinicaActivity
 
-class PacientesActivity : AppCompatActivity() {
+class PacientesActivity : BaseActivity() {
 
     private val viewModel: PacientesViewModel by viewModels()
     private lateinit var adapter: PacientesAdapter
@@ -48,8 +49,10 @@ class PacientesActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rvPacientes)
 
         adapter = PacientesAdapter { mascota ->
-            // En el siguiente paso esto abrirá la historia clínica
-            Toast.makeText(this, "Paciente: ${mascota.nombre}", Toast.LENGTH_SHORT).show()
+            val i = Intent(this, HistoriaClinicaActivity::class.java)
+            i.putExtra("mascotaId", mascota.id)
+            i.putExtra("mascotaNombre", mascota.nombre)
+            startActivity(i)
         }
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter

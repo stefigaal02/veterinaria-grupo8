@@ -27,6 +27,19 @@
         android:text="Pacientes" />
 
     <Button
+        android:id="@+id/btnCrearUsuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear usuario"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mi perfil" />
+
+    <Button
         android:id="@+id/btnCerrarSesion"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
