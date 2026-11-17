@@ -1,6 +1,8 @@
 package com.grupo08.pethealth.data.repository
 
 import com.grupo08.pethealth.data.remote.LoginRequest
+import com.grupo08.pethealth.data.remote.RegistroRequest
+import com.grupo08.pethealth.data.remote.UsuarioResponse
 import com.grupo08.pethealth.data.remote.LoginResponse
 import com.grupo08.pethealth.data.remote.PetHealthApi
 import com.grupo08.pethealth.utils.Resultado
@@ -19,4 +21,10 @@ class AuthRepository(
         }
         return resultado
     }
+
+    suspend fun registro(nombre: String, email: String, password: String, rol: String): Resultado<UsuarioResponse> =
+        llamarApi { api.registro(RegistroRequest(nombre, email, password, rol)) }
+
+    suspend fun perfil(): Resultado<UsuarioResponse> =
+        llamarApi { api.perfil() }
 }

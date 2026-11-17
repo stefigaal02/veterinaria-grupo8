@@ -5,14 +5,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import com.grupo08.pethealth.utils.BaseActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.ui.login.LoginActivity
+import com.grupo08.pethealth.ui.login.RegistroActivity
 import com.grupo08.pethealth.utils.SessionManager
 import com.grupo08.pethealth.ui.pacientes.PacientesActivity
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
+
+    override val conFlecha = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +33,19 @@ class HomeActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnPacientes).setOnClickListener {
             startActivity(Intent(this, PacientesActivity::class.java))
+        }
+
+
+        val btnCrearUsuario = findViewById<Button>(R.id.btnCrearUsuario)
+        if (session.rol() == "Administrador") {
+            btnCrearUsuario.visibility = android.view.View.VISIBLE
+        }
+        btnCrearUsuario.setOnClickListener {
+            startActivity(Intent(this, RegistroActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btnPerfil).setOnClickListener {
+            startActivity(Intent(this, PerfilActivity::class.java))
         }
 
         findViewById<Button>(R.id.btnCerrarSesion).setOnClickListener {

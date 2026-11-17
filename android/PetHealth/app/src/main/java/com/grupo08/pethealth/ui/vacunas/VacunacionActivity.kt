@@ -20,7 +20,10 @@ import com.google.android.material.textfield.TextInputLayout
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.VacunaResponse
 import com.grupo08.pethealth.utils.Resultado
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class VacunacionActivity : BaseActivity() {
 
@@ -28,6 +31,7 @@ class VacunacionActivity : BaseActivity() {
     private var vacunas: List<VacunaResponse> = emptyList()
     private var mascotaId = 0
     private var dialogo: AlertDialog? = null
+    private val formato = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +51,17 @@ class VacunacionActivity : BaseActivity() {
         val btnGuardar = findViewById<Button>(R.id.btnGuardar)
         val lista = findViewById<ListView>(R.id.lvAplicaciones)
 
-        val hoy = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+        val hoy = formato.format(Date())
         etFecha.setText(hoy)
-        etRefuerzo.setOnClickListener { elegirFecha(etRefuerzo) }
+        etFecha.setOnClickListener {
+            elegirFecha(etFecha, null, System.currentTimeMillis())
+        }
+        etRefuerzo.setOnClickListener {
+            val minimo = Calendar.getInstance()
+            minimo.time = formato.parse(etFecha.text.toString()) ?: Date()
+            minimo.add(Calendar.DAY_OF_MONTH, 1)
+            elegirFecha(etRefuerzo, minimo.timeInMillis, null)
+        }
 
         findViewById<Button>(R.id.btnNuevaVacuna).setOnClickListener { mostrarDialogoVacuna() }
         findViewById<Button>(R.id.btnCalendario).setOnClickListener {
@@ -67,7 +79,9 @@ class VacunacionActivity : BaseActivity() {
                 tvError.text = "No hay vacunas, crea una con \"+ Nueva vacuna\""
                 tvError.visibility = View.VISIBLE
             } else if (fecha.isNotEmpty() && refuerzo.isNotEmpty()) {
-                if (refuerzo <= fecha) {
+                if (fecha > hoy) {
+                    tilFecha.error = "La fecha de aplicación no puede ser futura"
+                } else if (refuerzo <= fecha) {
                     tilRefuerzo.error = "El refuerzo debe ser posterior a la aplicación"
                 } else {
                     val vacuna = vacunas[spVacuna.selectedItemPosition]
@@ -147,11 +161,15 @@ class VacunacionActivity : BaseActivity() {
         viewModel.cargarAplicaciones(mascotaId)
     }
 
-    private fun elegirFecha(campo: TextInputEditText) {
+    private fun elegirFecha(campo: TextInputEditText, minimo: Long?, maximo: Long?) {
         val c = Calendar.getInstance()
-        DatePickerDialog(this, { _, a, m, d ->
+        campo.text.toString().takeIf { it.isNotEmpty() }?.let { c.time = formato.parse(it) ?: Date() }
+        val dialogo = DatePickerDialog(this, { _, a, m, d ->
             campo.setText(String.format("%04d-%02d-%02d", a, m + 1, d))
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))
+        minimo?.let { dialogo.datePicker.minDate = it }
+        maximo?.let { dialogo.datePicker.maxDate = it }
+        dialogo.show()
     }
 
     private fun mostrarDialogoVacuna() {
