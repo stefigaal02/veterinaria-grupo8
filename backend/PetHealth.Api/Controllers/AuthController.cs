@@ -20,6 +20,7 @@ public class AuthController : ControllerBase
         _config = config;
     }
 
+    [Authorize(Roles = "Administrador")]
     [HttpPost("registro")]
     public async Task<IActionResult> Registro(RegistroDto dto)
     {
