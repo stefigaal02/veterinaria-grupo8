@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.VacunaResponse
 import com.grupo08.pethealth.utils.Resultado
+import com.grupo08.pethealth.utils.SessionManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -63,7 +64,9 @@ class VacunacionActivity : BaseActivity() {
             elegirFecha(etRefuerzo, minimo.timeInMillis, null)
         }
 
-        findViewById<Button>(R.id.btnNuevaVacuna).setOnClickListener { mostrarDialogoVacuna() }
+        val btnNuevaVacuna = findViewById<Button>(R.id.btnNuevaVacuna)
+        if (SessionManager(this).rol() != "Administrador") btnNuevaVacuna.visibility = View.GONE
+        btnNuevaVacuna.setOnClickListener { mostrarDialogoVacuna() }
         findViewById<Button>(R.id.btnCalendario).setOnClickListener {
             startActivity(Intent(this, CalendarioVacunasActivity::class.java).putExtra("mascotaId", mascotaId))
         }
