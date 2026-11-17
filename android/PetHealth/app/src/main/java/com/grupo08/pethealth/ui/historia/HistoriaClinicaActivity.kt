@@ -14,6 +14,7 @@ import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.HistoriaResponse
 import com.grupo08.pethealth.ui.vacunas.VacunacionActivity
 import com.grupo08.pethealth.utils.Resultado
+import com.grupo08.pethealth.utils.SessionManager
 
 class HistoriaClinicaActivity : BaseActivity() {
 
@@ -35,7 +36,9 @@ class HistoriaClinicaActivity : BaseActivity() {
         val panel = findViewById<View>(R.id.panelAcciones)
         val lista = findViewById<ListView>(R.id.lvConsultas)
 
+        val puedeEscribir = SessionManager(this).rol() != "Auxiliar"
         btnAbrir.setOnClickListener { viewModel.abrir(mascotaId) }
+        if (!puedeEscribir) findViewById<Button>(R.id.btnNuevaConsulta).visibility = View.GONE
 
         findViewById<Button>(R.id.btnNuevaConsulta).setOnClickListener {
             val i = Intent(this, NuevaConsultaActivity::class.java)
@@ -57,6 +60,7 @@ class HistoriaClinicaActivity : BaseActivity() {
         }
 
         lista.setOnItemClickListener { _, _, pos, _ ->
+            if (!puedeEscribir) return@setOnItemClickListener
             val c = historia?.consultas?.get(pos) ?: return@setOnItemClickListener
             val i = Intent(this, DiagnosticosActivity::class.java)
             i.putExtra("consultaId", c.id)
@@ -95,7 +99,7 @@ class HistoriaClinicaActivity : BaseActivity() {
                     lista.adapter = null
                     tvMensaje.text = estado.mensaje
                     tvMensaje.visibility = View.VISIBLE
-                    btnAbrir.visibility = View.VISIBLE
+                    if (puedeEscribir && estado.mensaje.contains("no tiene historia")) btnAbrir.visibility = View.VISIBLE
                 }
             }
         }
