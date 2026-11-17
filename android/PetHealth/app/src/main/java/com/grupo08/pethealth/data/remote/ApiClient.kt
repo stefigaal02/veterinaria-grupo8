@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 object ApiClient {
 
     // 10.0.2.2 = el computador visto desde el emulador
-    private const val BASE_URL = "http://127.0.0.1:5021/"
+    private const val BASE_URL = "http://192.168.0.105:5021/"
 
     private var api: PetHealthApi? = null
 

@@ -46,3 +46,52 @@ data class CrearMascotaRequest(
     val raza: String,
     val propietarioId: Int
 )
+
+data class AbrirHistoriaRequest(val mascotaId: Int)
+
+data class ConsultaResponse(
+    val id: Int,
+    val fecha: String,
+    val motivo: String,
+    val tratamiento: String,
+    val diagnosticos: List<String>
+)
+
+data class HistoriaResponse(
+    val id: Int,
+    val mascotaId: Int,
+    val mascotaNombre: String,
+    val fechaApertura: String,
+    val consultas: List<ConsultaResponse>
+)
+
+data class CrearConsultaRequest(
+    val historiaClinicaId: Int,
+    val motivo: String,
+    val tratamiento: String
+)
+
+data class CrearDiagnosticoRequest(val consultaId: Int, val descripcion: String)
+
+data class DiagnosticoResponse(val id: Int, val consultaId: Int, val descripcion: String)
+
+data class VacunaResponse(val id: Int, val nombre: String)
+
+data class CrearVacunaRequest(val nombre: String)
+
+data class AplicarVacunaRequest(
+    val mascotaId: Int,
+    val vacunaId: Int,
+    val fechaAplicacion: String,
+    val fechaRefuerzo: String
+)
+
+data class AplicacionResponse(
+    val id: Int,
+    val mascotaId: Int,
+    val mascotaNombre: String,
+    val vacunaId: Int,
+    val vacunaNombre: String,
+    val fechaAplicacion: String,
+    val fechaRefuerzo: String
+)
