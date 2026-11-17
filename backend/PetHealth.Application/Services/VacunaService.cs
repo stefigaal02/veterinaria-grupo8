@@ -38,6 +38,9 @@ public class VacunaService
         if (vacuna == null)
             throw new InvalidOperationException("La vacuna no existe");
 
+        if (dto.FechaAplicacion!.Value.Date > DateTime.Today)
+            throw new InvalidOperationException("La fecha de aplicación no puede ser futura");
+
         // Regla: el refuerzo tiene que ser después de la aplicación
         if (dto.FechaRefuerzo!.Value <= dto.FechaAplicacion!.Value)
             throw new InvalidOperationException("La fecha de refuerzo debe ser posterior a la de aplicación");
