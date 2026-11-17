@@ -41,3 +41,4 @@ consultas, diagnósticos, tratamientos y esquemas de vacunación con refuerzos.
 - vet@pethealth.com / 123456 (Veterinario)
 - aux@pethealth.com / 123456 (Auxiliar)
 - admin@pethealth.com / 123456 (Administrador)
+- Las contraseñas están cifradas con BCrypt; la clave de los usuarios de prueba es 123456
