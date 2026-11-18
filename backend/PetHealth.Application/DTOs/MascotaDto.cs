@@ -10,6 +10,7 @@ public class MascotaDto
     public string Raza { get; set; } = string.Empty;
     public int PropietarioId { get; set; }
     public string PropietarioNombre { get; set; } = string.Empty;
+    public bool Activo { get; set; }
 }
 
 public class CrearMascotaDto

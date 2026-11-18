@@ -4,6 +4,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import okhttp3.ResponseBody
@@ -60,4 +61,19 @@ interface PetHealthApi {
 
     @GET("api/vacunas/proximas")
     suspend fun proximas(@Query("dias") dias: Int): Response<List<AplicacionResponse>>
+
+    @GET("api/mascotas/{id}")
+    suspend fun mascota(@Path("id") id: Int): Response<MascotaResponse>
+
+    @PUT("api/mascotas/{id}")
+    suspend fun actualizarMascota(@Path("id") id: Int, @Body body: CrearMascotaRequest): Response<MascotaResponse>
+
+    @PUT("api/mascotas/{id}/anular")
+    suspend fun anularMascota(@Path("id") id: Int): Response<MensajeResponse>
+
+    @PUT("api/mascotas/{id}/reactivar")
+    suspend fun reactivarMascota(@Path("id") id: Int): Response<MensajeResponse>
+
+    @GET("api/mascotas/anulados")
+    suspend fun mascotasAnuladas(): Response<List<MascotaResponse>>
 }

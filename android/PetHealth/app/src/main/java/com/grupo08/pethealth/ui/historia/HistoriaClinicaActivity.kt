@@ -8,11 +8,15 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
-import com.grupo08.pethealth.utils.BaseActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.HistoriaResponse
+import com.grupo08.pethealth.data.remote.MascotaResponse
+import com.grupo08.pethealth.ui.pacientes.RegistrarPacienteActivity
 import com.grupo08.pethealth.ui.vacunas.VacunacionActivity
+import com.grupo08.pethealth.utils.BaseActivity
 import com.grupo08.pethealth.utils.Resultado
 import com.grupo08.pethealth.utils.SessionManager
 
@@ -21,6 +25,16 @@ class HistoriaClinicaActivity : BaseActivity() {
     private val viewModel: HistoriaViewModel by viewModels()
     private var mascotaId = 0
     private var historia: HistoriaResponse? = null
+    private var mascota: MascotaResponse? = null
+    private var sinHistoria = false
+
+    private lateinit var btnAbrir: Button
+    private lateinit var btnNuevaConsulta: Button
+    private lateinit var btnEditar: Button
+    private lateinit var btnAnular: Button
+    private lateinit var tvAnulado: TextView
+    private var puedeEscribir = true
+    private var esAdmin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +46,45 @@ class HistoriaClinicaActivity : BaseActivity() {
         findViewById<TextView>(R.id.tvTitulo).text = "Historia de $nombre"
         val tvMensaje = findViewById<TextView>(R.id.tvMensaje)
         val progress = findViewById<ProgressBar>(R.id.progress)
-        val btnAbrir = findViewById<Button>(R.id.btnAbrir)
+        btnAbrir = findViewById(R.id.btnAbrir)
+        btnNuevaConsulta = findViewById(R.id.btnNuevaConsulta)
+        btnEditar = findViewById(R.id.btnEditar)
+        btnAnular = findViewById(R.id.btnAnular)
+        tvAnulado = findViewById(R.id.tvAnulado)
         val panel = findViewById<View>(R.id.panelAcciones)
         val lista = findViewById<ListView>(R.id.lvConsultas)
 
-        val puedeEscribir = SessionManager(this).rol() != "Auxiliar"
-        btnAbrir.setOnClickListener { viewModel.abrir(mascotaId) }
-        if (!puedeEscribir) findViewById<Button>(R.id.btnNuevaConsulta).visibility = View.GONE
+        val rol = SessionManager(this).rol()
+        puedeEscribir = rol != "Auxiliar"
+        esAdmin = rol == "Administrador"
 
-        findViewById<Button>(R.id.btnNuevaConsulta).setOnClickListener {
+        btnAbrir.setOnClickListener { viewModel.abrir(mascotaId) }
+
+        btnNuevaConsulta.setOnClickListener {
             val i = Intent(this, NuevaConsultaActivity::class.java)
             i.putExtra("historiaId", historia?.id ?: 0)
             startActivity(i)
+        }
+
+        btnEditar.setOnClickListener {
+            val m = mascota ?: return@setOnClickListener
+            val i = Intent(this, RegistrarPacienteActivity::class.java)
+            i.putExtra("mascotaId", m.id)
+            i.putExtra("nombre", m.nombre)
+            i.putExtra("especie", m.especie)
+            i.putExtra("raza", m.raza)
+            i.putExtra("propietarioId", m.propietarioId)
+            startActivity(i)
+        }
+
+        btnAnular.setOnClickListener {
+            val m = mascota ?: return@setOnClickListener
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Anular paciente")
+                .setMessage("¿Anular a ${m.nombre}? Dejará de aparecer en la lista, pero su historia clínica se conserva.")
+                .setPositiveButton("Anular") { _, _ -> viewModel.anular(mascotaId) }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
 
         findViewById<Button>(R.id.btnVacunacion).setOnClickListener {
@@ -68,16 +109,42 @@ class HistoriaClinicaActivity : BaseActivity() {
             startActivity(i)
         }
 
+        viewModel.mascota.observe(this) { estado ->
+            if (estado is Resultado.Exito) {
+                mascota = estado.datos
+                findViewById<TextView>(R.id.tvTitulo).text = "Historia de ${estado.datos.nombre}"
+                actualizarBotones()
+            } else if (estado is Resultado.Error) {
+                Toast.makeText(this, estado.mensaje, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.anulado.observe(this) { estado ->
+            when (estado) {
+                is Resultado.Cargando -> progress.visibility = View.VISIBLE
+                is Resultado.Exito -> {
+                    progress.visibility = View.GONE
+                    Toast.makeText(this, estado.datos.mensaje, Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                is Resultado.Error -> {
+                    progress.visibility = View.GONE
+                    Toast.makeText(this, estado.mensaje, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
         viewModel.historia.observe(this) { estado ->
             when (estado) {
                 is Resultado.Cargando -> {
                     progress.visibility = View.VISIBLE
                     tvMensaje.visibility = View.GONE
-                    btnAbrir.visibility = View.GONE
+                    sinHistoria = false
+                    actualizarBotones()
                 }
                 is Resultado.Exito -> {
                     progress.visibility = View.GONE
-                    historia = estado.datos
+                    sinHistoria = false
                     panel.visibility = View.VISIBLE
                     val consultas = estado.datos.consultas.sortedByDescending { it.fecha }
                     historia = estado.datos.copy(consultas = consultas)
@@ -92,6 +159,7 @@ class HistoriaClinicaActivity : BaseActivity() {
                     } else {
                         tvMensaje.visibility = View.GONE
                     }
+                    actualizarBotones()
                 }
                 is Resultado.Error -> {
                     progress.visibility = View.GONE
@@ -99,14 +167,26 @@ class HistoriaClinicaActivity : BaseActivity() {
                     lista.adapter = null
                     tvMensaje.text = estado.mensaje
                     tvMensaje.visibility = View.VISIBLE
-                    if (puedeEscribir && estado.mensaje.contains("no tiene historia")) btnAbrir.visibility = View.VISIBLE
+                    sinHistoria = estado.mensaje.contains("no tiene historia")
+                    actualizarBotones()
                 }
             }
         }
     }
 
+    private fun actualizarBotones() {
+        val m = mascota
+        val anulado = m != null && !m.activo
+        tvAnulado.visibility = if (anulado) View.VISIBLE else View.GONE
+        btnNuevaConsulta.visibility = if (puedeEscribir && !anulado) View.VISIBLE else View.GONE
+        btnAbrir.visibility = if (puedeEscribir && !anulado && sinHistoria) View.VISIBLE else View.GONE
+        btnEditar.visibility = if (m != null && !anulado) View.VISIBLE else View.GONE
+        btnAnular.visibility = if (esAdmin && m != null && !anulado) View.VISIBLE else View.GONE
+    }
+
     override fun onResume() {
         super.onResume()
+        viewModel.cargarMascota(mascotaId)
         viewModel.cargar(mascotaId)
     }
 }

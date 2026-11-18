@@ -18,6 +18,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.grupo08.pethealth.R
 import com.grupo08.pethealth.data.remote.MascotaResponse
 import com.grupo08.pethealth.utils.Resultado
+import com.grupo08.pethealth.utils.SessionManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Intent
 import com.grupo08.pethealth.ui.historia.HistoriaClinicaActivity
 
@@ -28,6 +30,7 @@ class PacientesActivity : BaseActivity() {
     private lateinit var etBuscar: TextInputEditText
     private lateinit var tvMensaje: TextView
     private var todos: List<MascotaResponse> = emptyList()
+    private var verAnulados = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +50,26 @@ class PacientesActivity : BaseActivity() {
             startActivity(Intent(this, RegistrarPacienteActivity::class.java))
         }
         val rv = findViewById<RecyclerView>(R.id.rvPacientes)
+        val fab = findViewById<View>(R.id.fabNuevo)
+        val btnAnulados = findViewById<Button>(R.id.btnAnulados)
+        if (SessionManager(this).rol() == "Administrador") btnAnulados.visibility = View.VISIBLE
+        btnAnulados.setOnClickListener {
+            verAnulados = !verAnulados
+            btnAnulados.text = if (verAnulados) "Ver activos" else "Ver anulados"
+            fab.visibility = if (verAnulados) View.GONE else View.VISIBLE
+            viewModel.cargar(verAnulados)
+        }
 
         adapter = PacientesAdapter { mascota ->
+            if (verAnulados) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Reactivar paciente")
+                    .setMessage("¿Reactivar a ${mascota.nombre}? Volverá a aparecer en la lista de pacientes.")
+                    .setPositiveButton("Reactivar") { _, _ -> viewModel.reactivar(mascota.id) }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+                return@PacientesAdapter
+            }
             val i = Intent(this, HistoriaClinicaActivity::class.java)
             i.putExtra("mascotaId", mascota.id)
             i.putExtra("mascotaNombre", mascota.nombre)
@@ -58,7 +79,16 @@ class PacientesActivity : BaseActivity() {
         rv.adapter = adapter
 
         etBuscar.doAfterTextChanged { filtrar() }
-        btnReintentar.setOnClickListener { viewModel.cargar() }
+        btnReintentar.setOnClickListener { viewModel.cargar(verAnulados) }
+
+        viewModel.reactivado.observe(this) { estado ->
+            if (estado is Resultado.Exito) {
+                Toast.makeText(this, estado.datos.mensaje, Toast.LENGTH_SHORT).show()
+                viewModel.cargar(verAnulados)
+            } else if (estado is Resultado.Error) {
+                Toast.makeText(this, estado.mensaje, Toast.LENGTH_LONG).show()
+            }
+        }
 
         viewModel.estado.observe(this) { estado ->
             when (estado) {
@@ -85,7 +115,7 @@ class PacientesActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.cargar()   // recarga al volver a la pantalla
+        viewModel.cargar(verAnulados)
     }
 
     // RF-08-09: filtrar por paciente
@@ -98,7 +128,7 @@ class PacientesActivity : BaseActivity() {
         adapter.actualizar(lista)
 
         if (lista.isEmpty()) {
-            tvMensaje.text = if (todos.isEmpty()) "Aún no hay pacientes registrados"
+            tvMensaje.text = if (todos.isEmpty()) (if (verAnulados) "No hay pacientes anulados" else "Aún no hay pacientes registrados")
             else "No se encontraron pacientes"
             tvMensaje.visibility = View.VISIBLE
         } else {

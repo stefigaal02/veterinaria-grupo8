@@ -26,6 +26,7 @@ class RegistrarPacienteActivity : BaseActivity() {
     private val viewModel: RegistrarPacienteViewModel by viewModels()
     private var propietarios: List<PropietarioResponse> = emptyList()
     private var idPorSeleccionar: Int? = null
+    private var mascotaId = 0
     private var dialogo: AlertDialog? = null
 
     private lateinit var spPropietario: Spinner
@@ -51,6 +52,16 @@ class RegistrarPacienteActivity : BaseActivity() {
         val tvError = findViewById<TextView>(R.id.tvError)
         val btnGuardar = findViewById<Button>(R.id.btnGuardar)
         val progress = findViewById<ProgressBar>(R.id.progress)
+
+        mascotaId = intent.getIntExtra("mascotaId", 0)
+        if (mascotaId != 0) {
+            findViewById<TextView>(R.id.tvTitulo).text = "Editar paciente"
+            btnGuardar.text = "Guardar cambios"
+            etNombre.setText(intent.getStringExtra("nombre"))
+            etEspecie.setText(intent.getStringExtra("especie"))
+            etRaza.setText(intent.getStringExtra("raza"))
+            idPorSeleccionar = intent.getIntExtra("propietarioId", 0)
+        }
 
         findViewById<Button>(R.id.btnNuevoPropietario).setOnClickListener { mostrarDialogoPropietario() }
 
@@ -118,7 +129,8 @@ class RegistrarPacienteActivity : BaseActivity() {
 
             if (valido) {
                 val propietario = propietarios[spPropietario.selectedItemPosition]
-                viewModel.guardar(nombre, especie, raza, propietario.id)
+                if (mascotaId != 0) viewModel.actualizar(mascotaId, nombre, especie, raza, propietario.id)
+                else viewModel.guardar(nombre, especie, raza, propietario.id)
             }
         }
 
@@ -131,7 +143,8 @@ class RegistrarPacienteActivity : BaseActivity() {
                 }
                 is Resultado.Exito -> {
                     progress.visibility = View.GONE
-                    Toast.makeText(this, "Paciente ${estado.datos.nombre} registrado", Toast.LENGTH_SHORT).show()
+                    val accion = if (mascotaId != 0) "actualizado" else "registrado"
+                    Toast.makeText(this, "Paciente ${estado.datos.nombre} $accion", Toast.LENGTH_SHORT).show()
                     finish()   // vuelve a la lista, que se recarga sola
                 }
                 is Resultado.Error -> {

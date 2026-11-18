@@ -24,6 +24,9 @@ public class HistoriaClinicaService
         if (mascota == null)
             throw new InvalidOperationException("La mascota no existe");
 
+        if (!mascota.Activo)
+            throw new InvalidOperationException("El paciente está anulado");
+
         if (await _repo.ObtenerPorMascotaAsync(dto.MascotaId) != null)
             throw new InvalidOperationException("La mascota ya tiene historia clínica");
 
@@ -66,6 +69,9 @@ public class HistoriaClinicaService
     {
         if (!await _repo.ExisteHistoriaAsync(dto.HistoriaClinicaId))
             throw new InvalidOperationException("La historia clínica no existe");
+
+        if (!await _repo.MascotaActivaDeHistoriaAsync(dto.HistoriaClinicaId))
+            throw new InvalidOperationException("El paciente está anulado");
 
         var c = new Consulta
         {

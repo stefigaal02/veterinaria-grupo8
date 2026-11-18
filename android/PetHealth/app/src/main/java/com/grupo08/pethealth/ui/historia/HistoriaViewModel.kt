@@ -9,6 +9,9 @@ import com.grupo08.pethealth.data.remote.ApiClient
 import com.grupo08.pethealth.data.remote.ConsultaResponse
 import com.grupo08.pethealth.data.remote.DiagnosticoResponse
 import com.grupo08.pethealth.data.remote.HistoriaResponse
+import com.grupo08.pethealth.data.remote.MascotaResponse
+import com.grupo08.pethealth.data.remote.MensajeResponse
+import com.grupo08.pethealth.data.repository.MascotaRepository
 import com.grupo08.pethealth.data.repository.HistoriaRepository
 import com.grupo08.pethealth.utils.Resultado
 import kotlinx.coroutines.launch
@@ -16,6 +19,13 @@ import kotlinx.coroutines.launch
 class HistoriaViewModel(app: Application) : AndroidViewModel(app) {
 
     private val repo = HistoriaRepository(ApiClient.obtener(app))
+    private val mascotaRepo = MascotaRepository(ApiClient.obtener(app))
+
+    private val _mascota = MutableLiveData<Resultado<MascotaResponse>>()
+    val mascota: LiveData<Resultado<MascotaResponse>> = _mascota
+
+    private val _anulado = MutableLiveData<Resultado<MensajeResponse>>()
+    val anulado: LiveData<Resultado<MensajeResponse>> = _anulado
 
     private val _historia = MutableLiveData<Resultado<HistoriaResponse>>()
     val historia: LiveData<Resultado<HistoriaResponse>> = _historia
@@ -52,5 +62,14 @@ class HistoriaViewModel(app: Application) : AndroidViewModel(app) {
     fun cargarResumen(mascotaId: Int) {
         _resumen.value = Resultado.Cargando
         viewModelScope.launch { _resumen.value = repo.resumen(mascotaId) }
+    }
+
+    fun cargarMascota(id: Int) {
+        viewModelScope.launch { _mascota.value = mascotaRepo.obtener(id) }
+    }
+
+    fun anular(id: Int) {
+        _anulado.value = Resultado.Cargando
+        viewModelScope.launch { _anulado.value = mascotaRepo.anular(id) }
     }
 }

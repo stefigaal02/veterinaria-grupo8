@@ -24,7 +24,8 @@ data class MascotaResponse(
     val especie: String,
     val raza: String,
     val propietarioId: Int,
-    val propietarioNombre: String
+    val propietarioNombre: String,
+    val activo: Boolean = true
 )
 
 data class PropietarioResponse(
@@ -95,3 +96,5 @@ data class AplicacionResponse(
     val fechaAplicacion: String,
     val fechaRefuerzo: String
 )
+
+data class MensajeResponse(val mensaje: String)
