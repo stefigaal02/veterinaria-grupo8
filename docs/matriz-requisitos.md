@@ -27,6 +27,7 @@
 | RF-C-02 | Registro de usuarios | Administrador | RegistroActivity | `POST /api/auth/registro` | Solo el administrador ve el botón y puede crear usuarios con rol. Otro rol recibe 403. |
 | RF-C-03 | Gestión de perfil | Todos | PerfilActivity | `GET /api/auth/perfil` | Muestra nombre, correo y rol del usuario de la sesión. |
 | RF-C-04 | Cerrar sesión | Todos | HomeActivity | – | Borra la sesión guardada y vuelve al login. |
+| RF-C-05 | CRUD de pacientes (editar, anular, reactivar) | Editar: todos; anular y reactivar: Administrador | RegistrarPacienteActivity (modo edición), HistoriaClinicaActivity, PacientesActivity | `PUT /api/mascotas/{id}`, `PUT /api/mascotas/{id}/anular`, `PUT /api/mascotas/{id}/reactivar`, `GET /api/mascotas/anulados` | Editar guarda nombre, especie, raza y propietario (400 si el propietario no existe o el paciente está anulado, 404 si no existe). El administrador anula con confirmación: el paciente sale de la lista pero su historia se conserva. Desde "Ver anulados" el administrador puede reactivarlo. Otro rol recibe 403 al anular o reactivar. |
 
 ## 3. Requisitos no funcionales
 
@@ -55,3 +56,4 @@
 | RN-08 | Una consulta requiere motivo; un diagnóstico requiere una consulta existente | API + app |
 | RN-09 | Las contraseñas se guardan cifradas (BCrypt) y tienen mínimo 6 caracteres | API (`AuthService`) |
 | RN-10 | No puede haber dos usuarios con el mismo correo | API (`AuthService`) |
+| RN-11 | Los pacientes no se eliminan; se anulan (borrado lógico) para conservar la información médica. Un paciente anulado no admite nuevas consultas, historias ni vacunas. | API (`MascotaService`, `HistoriaClinicaService`, `VacunaService`) + app oculta botones |
