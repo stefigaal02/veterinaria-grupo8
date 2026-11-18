@@ -42,6 +42,13 @@ class RegistrarPacienteViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun actualizar(id: Int, nombre: String, especie: String, raza: String, propietarioId: Int) {
+        _guardado.value = Resultado.Cargando
+        viewModelScope.launch {
+            _guardado.value = mascotaRepo.actualizar(id, nombre, especie, raza, propietarioId)
+        }
+    }
+
     fun guardar(nombre: String, especie: String, raza: String, propietarioId: Int) {
         _guardado.value = Resultado.Cargando
         viewModelScope.launch {
