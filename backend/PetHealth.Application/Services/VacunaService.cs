@@ -34,6 +34,9 @@ public class VacunaService
         if (mascota == null)
             throw new InvalidOperationException("La mascota no existe");
 
+        if (!mascota.Activo)
+            throw new InvalidOperationException("El paciente está anulado");
+
         var vacuna = await _repo.ObtenerAsync(dto.VacunaId);
         if (vacuna == null)
             throw new InvalidOperationException("La vacuna no existe");

@@ -15,7 +15,15 @@ public class MascotaRepository : IMascotaRepository
     }
 
     public Task<List<Mascota>> ListarAsync() =>
-        _db.Mascotas.Include(m => m.Propietario).ToListAsync();
+        _db.Mascotas.Include(m => m.Propietario).Where(m => m.Activo).ToListAsync();
+
+    public Task<List<Mascota>> ListarAnuladasAsync() =>
+        _db.Mascotas.Include(m => m.Propietario).Where(m => !m.Activo).ToListAsync();
+
+    public async Task ActualizarAsync(Mascota mascota)
+    {
+        await _db.SaveChangesAsync();
+    }
 
     public Task<Mascota?> ObtenerAsync(int id) =>
         _db.Mascotas.Include(m => m.Propietario).FirstOrDefaultAsync(m => m.Id == id);

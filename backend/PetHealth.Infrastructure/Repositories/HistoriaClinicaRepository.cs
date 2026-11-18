@@ -25,6 +25,9 @@ public class HistoriaClinicaRepository : IHistoriaClinicaRepository
     public Task<bool> ExisteHistoriaAsync(int historiaId) =>
         _db.HistoriasClinicas.AnyAsync(h => h.Id == historiaId);
 
+    public Task<bool> MascotaActivaDeHistoriaAsync(int historiaId) =>
+        _db.HistoriasClinicas.AnyAsync(h => h.Id == historiaId && h.Mascota!.Activo);
+
     public Task<bool> ExisteConsultaAsync(int consultaId) =>
         _db.Consultas.AnyAsync(c => c.Id == consultaId);
 

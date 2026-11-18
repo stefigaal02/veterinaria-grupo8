@@ -41,4 +41,53 @@ public class MascotasController : ControllerBase
             return BadRequest(new { mensaje = ex.Message });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Actualizar(int id, CrearMascotaDto dto)
+    {
+        try
+        {
+            var m = await _service.ActualizarAsync(id, dto);
+            if (m == null) return NotFound(new { mensaje = "Mascota no encontrada" });
+            return Ok(m);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "Administrador")]
+    [HttpPut("{id}/anular")]
+    public async Task<IActionResult> Anular(int id)
+    {
+        try
+        {
+            if (!await _service.AnularAsync(id)) return NotFound(new { mensaje = "Mascota no encontrada" });
+            return Ok(new { mensaje = "Paciente anulado" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "Administrador")]
+    [HttpPut("{id}/reactivar")]
+    public async Task<IActionResult> Reactivar(int id)
+    {
+        try
+        {
+            if (!await _service.ReactivarAsync(id)) return NotFound(new { mensaje = "Mascota no encontrada" });
+            return Ok(new { mensaje = "Paciente reactivado" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "Administrador")]
+    [HttpGet("anulados")]
+    public async Task<IActionResult> Anulados() => Ok(await _service.ListarAnuladasAsync());
 }

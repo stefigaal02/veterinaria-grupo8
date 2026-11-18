@@ -9,4 +9,5 @@ public class Mascota
     public int PropietarioId { get; set; }
     public Propietario? Propietario { get; set; }
     public HistoriaClinica? HistoriaClinica { get; set; }
+    public bool Activo { get; set; } = true;
 }

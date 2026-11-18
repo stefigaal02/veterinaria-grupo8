@@ -23,5 +23,9 @@ public class AppDbContext : DbContext
             .HasOne(m => m.HistoriaClinica)
             .WithOne(h => h.Mascota)
             .HasForeignKey<HistoriaClinica>(h => h.MascotaId);
+
+        modelBuilder.Entity<Mascota>()
+            .Property(m => m.Activo)
+            .HasDefaultValue(true);
     }
 }
